@@ -1,0 +1,13 @@
+{
+  "id": "kKGrrGqPhkHwsmcE",
+  "name": "OpenRouter account",
+  "type": "openRouterApi",
+  "data": {
+    "apiKey": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "4xPeSwpvlRcMAgAh",
+    "teamName": "Video"
+  }
+}

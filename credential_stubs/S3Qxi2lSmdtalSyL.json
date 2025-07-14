@@ -1,0 +1,13 @@
+{
+  "id": "S3Qxi2lSmdtalSyL",
+  "name": "Youtube",
+  "type": "telegramApi",
+  "data": {
+    "accessToken": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "4xPeSwpvlRcMAgAh",
+    "teamName": "Video"
+  }
+}

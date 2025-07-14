@@ -23,7 +23,7 @@
         "promptType": "define",
         "text": "={{ $json.body.events[0].message.text }}",
         "options": {
-          "systemMessage": "ตอบแค่ สวัสดีพอ"
+          "systemMessage": "ตอบแค่ สวัสดี พอ"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -71,7 +71,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        540,
+        520,
         0
       ],
       "id": "09808597-78e3-4ec5-a61e-8632585de2cd",
@@ -79,11 +79,11 @@
     },
     {
       "parameters": {
+        "modelName": "models/gemini-2.5-pro",
         "options": {
-          "maxOutputTokens": 800,
+          "maxOutputTokens": 100,
           "temperature": 0.4,
-          "topK": 32,
-          "topP": 1
+          "topP": 0.1
         }
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -152,7 +152,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "e81675b7-4531-4557-9466-3d31d746be23",
+  "versionId": "72955ae8-97c6-4475-9931-4922df8b1e34",
   "owner": {
     "type": "team",
     "teamId": "BQc53F2D7M8I3kQx",

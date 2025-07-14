@@ -1,0 +1,798 @@
+{
+  "id": "AttvkgLOYe6Z79fs",
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Generate Image",
+        "height": 320,
+        "width": 920,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        440
+      ],
+      "typeVersion": 1,
+      "id": "16f2aabb-5e91-47f7-8baa-7bcd8b8af203",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Full Video",
+        "height": 340,
+        "width": 1140
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1460
+      ],
+      "typeVersion": 1,
+      "id": "42ef4771-c247-4d1f-936d-ed2886b35145",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        60
+      ],
+      "id": "e5674971-a9b7-49fd-b312-d69ca6782cc2",
+      "name": "Telegram Trigger",
+      "webhookId": "439d16a4-b199-43f9-a434-ebe9fb045360",
+      "credentials": {
+        "telegramApi": {
+          "id": "S3Qxi2lSmdtalSyL",
+          "name": "Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f6908d45-bf9c-4cc0-ae66-ba0f4a442e10",
+              "leftValue": "={{ $json.message.from.is_bot }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        60
+      ],
+      "id": "7e9991e8-047b-47fe-99d8-8d98c2eda674",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=สร้างสตอรี่จากไอเดียด้านล่างนี้ เพื่อใช้ในการทำวีดีโอสั้น:\n{{ $json.message.text }}\n\n** Write in ENG **"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        620,
+        60
+      ],
+      "id": "91b7ad24-0973-49ff-b3ee-1ca44875706d",
+      "name": "Create Story"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        620,
+        240
+      ],
+      "id": "78e8d4d3-c5d3-47d4-b6a0-adc61299ac17",
+      "name": "4o-mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "kKGrrGqPhkHwsmcE",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=สร้าง Image Prompt 5 ชุด สำหรับ สร้างรูปภาพจาก Story ด้านล่างนี้:\n{{ $json.text }}\n\n** Write in ENG **\n\nOutput Format\n{\n  \"scene_number\": 1,\n  \"image_prompt\": \"Image Prompt\"\n  ...\n}",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1060,
+        60
+      ],
+      "id": "27b1bbad-953e-46fc-94c3-7ee3efd11d5b",
+      "name": "Image Prompt"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.7-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        260
+      ],
+      "id": "d00c2973-1303-4ab0-ad33-351c82477889",
+      "name": "Claude-3.7",
+      "credentials": {
+        "openRouterApi": {
+          "id": "kKGrrGqPhkHwsmcE",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"array\",\n\t\"properties\": {\n\t\t\"scene_number\": {\n\t\t\t\"type\": \"number\"\n\t\t},\n\t\t\"image_prompt\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        260
+      ],
+      "id": "f7cb4834-58a8-4d3b-8203-f3deec84fefd",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        60
+      ],
+      "id": "37f4f431-0138-4335-afdc-099011a3952c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.image_prompt }}"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "9:16"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        540
+      ],
+      "id": "a8d6c27f-1b61-4749-ac08-abaac07c2e5a",
+      "name": "Generate Image"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        540
+      ],
+      "id": "1e5fdb49-1a05-4e9f-872a-e06b771abec0",
+      "name": "Wait",
+      "webhookId": "adb16b43-8e7e-49af-84ac-f8cff70e4652"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/flux-pro/requests/{{ $json.request_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "id": "40d3a882-ba20-4dc0-86d4-2343b646beef",
+      "name": "Get Image URL"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Video",
+        "height": 320,
+        "width": 1100,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        780
+      ],
+      "typeVersion": 1,
+      "id": "1b335b3e-4395-43a6-a296-42508adc2a14",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        880
+      ],
+      "id": "1ac2ee5e-4e22-4bc2-bc75-9ad645ab3890",
+      "name": "Wait1",
+      "webhookId": "adb16b43-8e7e-49af-84ac-f8cff70e4652"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/kling-video/v1.6/pro/image-to-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $('Split Out').item.json.image_prompt }}"
+            },
+            {
+              "name": "image_url",
+              "value": "={{ $json.images[0].url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        880
+      ],
+      "id": "74d35c36-6a3a-4db3-8aff-27dfbd5508e0",
+      "name": "Generate Video"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Video",
+        "height": 320,
+        "width": 920,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1120
+      ],
+      "typeVersion": 1,
+      "id": "4896d3e3-650c-475b-9b72-96f267d06bee",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1220
+      ],
+      "id": "7f9ba24e-2cc2-48bb-9c54-054b99f0e3a2",
+      "name": "Wait2",
+      "webhookId": "adb16b43-8e7e-49af-84ac-f8cff70e4652"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/elevenlabs/requests/{{ $json.request_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        1220
+      ],
+      "id": "323868a8-bffd-4950-a18c-b45c1ad9e19d",
+      "name": "Get Image URL2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/elevenlabs/sound-effects",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=relaxing Lofi track with soft piano, gentle bass, subtle drums, and ambient sounds like rain or street noise, evoking a calm, introspective, and cozy atmosphere at 70 BPM"
+            },
+            {
+              "name": "duration_seconds",
+              "value": "={{ 22 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        1220
+      ],
+      "id": "126050f6-d568-4c7e-941f-45ac7f4a7af6",
+      "name": "Generate Background Music"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        880
+      ],
+      "id": "52c1e836-a4f8-4deb-8fac-5f7891c90cac",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "content": "## Idea & Story",
+        "height": 420,
+        "width": 1720,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "348815b1-33d3-4f79-bc2f-5c3fcf3fe436",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer your_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"da42c8d3-7d14-4385-8fd6-9b122e7f1971\",\n  \"modifications\": {\n    \"Audio-1.source\": \"{{ $json.audio.url }}\",\n    \"Video-1.source\": \"{{ $json.data[0].video.url }}\",\n    \"Video-2.source\": \"{{ $json.data[1].video.url }}\",\n    \"Video-3.source\": \"{{ $json.data[2].video.url }}\",\n    \"Video-4.source\": \"{{ $json.data[3].video.url }}\",\n    \"Video-5.source\": \"{{ $json.data[4].video.url }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        1580
+      ],
+      "id": "d98919ed-e756-42b3-a479-08e269e90827",
+      "name": "Generate Full Video"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/kling-video/requests/{{ $json.request_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key your_key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        880
+      ],
+      "id": "f429818c-05a1-4cf2-af10-cf1bb544383b",
+      "name": "Get Video URL"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        160,
+        1580
+      ],
+      "id": "bc0b1b27-34c0-4c79-87d2-59fa9c8be75a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        1580
+      ],
+      "id": "47d0975d-1daf-4c29-8b5e-5fe931bdb82f",
+      "name": "Wait3",
+      "webhookId": "56980a5f-9f6d-45db-b094-511e72bca207"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "your_chat_id",
+        "file": "={{ $json.url }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        1580
+      ],
+      "id": "e8e40d4f-ba8c-4d5b-a396-3e63470b028c",
+      "name": "Telegram",
+      "webhookId": "488efae1-4b66-4f66-8045-d1fce820d5f9"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create Story",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create Story",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude-3.7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Story": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image URL": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Get Image URL2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Background Music": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Generate Background Music",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image URL2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Video URL": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Generate Full Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Full Video": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "b65b0227-b03c-4f58-8eaa-8888cee14efa",
+  "owner": {
+    "type": "team",
+    "teamId": "4xPeSwpvlRcMAgAh",
+    "teamName": "Video"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}
