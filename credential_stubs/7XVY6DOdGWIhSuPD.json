@@ -1,0 +1,13 @@
+{
+  "id": "7XVY6DOdGWIhSuPD",
+  "name": "Google Gemini(PaLM) Api account",
+  "type": "googlePalmApi",
+  "data": {
+    "apiKey": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "BQc53F2D7M8I3kQx",
+    "teamName": "Chat Booking"
+  }
+}
